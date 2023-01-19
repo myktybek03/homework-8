@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react"
+import { Header } from "./components/header/Header"
+import { LoginForm } from "./components/login-page/LoginForm"
+import MainContent from "./components/main-content/MainContent"
+import "./App.css"
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentPage, setCurrentPage] = useState("users")
+
+  useEffect(() => {
+    const storageUserLoggedInfo = localStorage.getItem("isLogin")
+    if (storageUserLoggedInfo === "1") {
+      setIsLoggedIn("true")
+    }
+  }, [])
+
+  const handleNavigation = (page) => {
+    setCurrentPage(page)
+  }
+
+  const loginHandler = () => {
+    localStorage.setItem("isLogin", "1")
+    setIsLoggedIn(true)
+  }
+
+  const logoutHandler = () => {
+    localStorage.removeItem("isLogin")
+    setIsLoggedIn(false)
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header
+        onChange={handleNavigation}
+        onClick={logoutHandler}
+        isAuth={isLoggedIn}
+      />
+      {isLoggedIn ? (
+        <MainContent currentPage={currentPage} />
+      ) : (
+        <LoginForm loginHandler={loginHandler} />
+      )}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
